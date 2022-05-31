@@ -1,52 +1,56 @@
-package com.order;
+package com.user.controller;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.validation.Valid;
+import javax.websocket.server.PathParam;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
+
+import com.user.bean.UserVo;
+import com.user.service.UserService;
 
 @RestController
-public class OrderController {
+public class UserController {
 
 	@Autowired
-	OrderService service;
+	UserService service;
 
-	@Autowired
-	private RestTemplate restTemplate;
-	
-	@PostMapping("order")
 	@ResponseStatus(code = HttpStatus.CREATED)
-	void createOrder(@Valid @RequestBody OrderVO order) {
-		service.saveOrder(order);
-		System.out.println("Item:" + order.getItem());
-		System.out.println("Price:" + order.getPrice());
-		ResponseEntity<String> responseEntity= restTemplate.getForEntity("http://EMAILSERVICE/v1/email", String.class);
-		String emailServiceResponse=responseEntity.getBody();
-		System.out.println("emailServiceResponse:" + emailServiceResponse);
-		//Map<String, String> emails=new HashMap();
-		
-		ResponseEntity<String> responseEntity1= restTemplate.postForEntity("http://EMAILSERVICE/v1/email","pratapsinh.patil@gmail.com", String.class);
-		System.out.println("emailServiceResponse for post request:" + responseEntity1.getBody());
+	@PostMapping("user")
+	public void createUser(@Valid @RequestBody UserVo userVo) {
+		System.out.println("Creating User");
+		service.createUser(userVo);
+		System.out.println("User Created");
 	}
 
-	@GetMapping("order")
-	public List<OrderVO> getOrders() {
+	@GetMapping({ "/v1/user/{id}", "/v1/user" })
+	public List<UserVo> getUsers(@PathVariable(required = false) Optional<Integer> id) {
+		System.out.println("getting Users");
+		return id.isPresent() && id.get() > 0 ? service.getUser(Arrays.asList(id.get())) : service.getUsers();
+	}
 
-		return service.getOrders();
+	@DeleteMapping("/v1/user/{id}")
+	public void deleteUser(@PathVariable Integer id) {
+		System.out.println("deleting Users");
+		service.deleteUser(id);
+		System.out.println("deleted Users");
 
 	}
 
@@ -60,5 +64,4 @@ public class OrderController {
 		});
 		return errorMessages;
 	}
-
 }
