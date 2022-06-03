@@ -1,0 +1,44 @@
+java -jar target\email-service-0.0.1-SNAPSHOT.jar --server.port=8082
+
+{
+    "name":"Mobile",
+	"image":"product image",
+	"thumbNail":"product thumbNail",
+	"description":"product description",
+	"shortdescription":"product short description",
+	"rating":1,
+    "price":10.23,
+"active":true
+}
+
+
+
+String 
+	String shortDescription;
+	float rating;
+	float price;
+	boolean active;
+	
+
+
+Config-server -- default port is 8888
+@EnableConfigServer required on the application class
+
+
+
+
+https://github.com/PratapsinhPatil/springboot_ms.git
+
+
+
+Excersize:
+1. Order servcie --> (Load Balancer/Rest service call) --> SMS service using MQ Broaker
+
+
+
+
+
+
+
+Exersixe
+
